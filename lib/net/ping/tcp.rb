@@ -34,7 +34,7 @@ module Net
     # considered a failed ping.  See the documentation for the
     # Ping::TCP.service_check= method if you wish to change this behavior.
     #
-    def ping(host=@host)
+    def ping(host = @host)
       super(host)
 
       bool = false
@@ -76,8 +76,10 @@ module Net
         else
           sockopt = sock.getsockopt(Socket::SOL_SOCKET, Socket::SO_ERROR)
 
-          # Check to see if ECONNREFUSED actually occurred.
-          if sockopt.int == Errno::ECONNREFUSED::Errno
+          # Check if any error occurred, alternative check for each:
+          # if Errno::ECONNREFUSED::Errno
+          # elsif Errno::EHOSTUNREACH::Errno
+          if sockopt.int != 0
             @exception = Errno::ECONNREFUSED
           else
             bool = true
